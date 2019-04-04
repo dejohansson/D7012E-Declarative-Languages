@@ -1,3 +1,4 @@
+-- Chapter 5
 -- Ex 5.2
 maxThree :: (Int, Int, Int) -> Int
 maxThree (a, b, c)
@@ -52,3 +53,23 @@ pushRight n s
     | n <= 0 = ""
     | n - length s > 0 = " " ++ pushRight (n-1) s
     | otherwise = head s : pushRight (n-1) (tail s)
+
+-- Chapter 6
+-- Ex 6.29
+{- 
+Haskell Stores:
+Dry Sherry, llt ........... 5.40
+Fish Fingers .............. 1.21
+Orange Jelly .............. 0.56
+Hula Hoops (Giant) ........ 1.33
+Unknown Item .............. 0.00
+Dry Sherry, llt ........... 5.40
+Discount .................. 1.00
+Total .................... 12.90  -}
+
+--Bar codes: [1234, 4791, 3814, 1112, 1113, 1234]
+
+type billType = [(Int, String, Int)] -- Nr, Name, Price
+
+makeDiscount :: BillType -> Int
+makeDiscount b = 
