@@ -69,7 +69,32 @@ Total .................... 12.90  -}
 
 --Bar codes: [1234, 4791, 3814, 1112, 1113, 1234]
 
-type billType = [(Int, String, Int)] -- Nr, Name, Price
+--type billType = [(Int, String, Int)] -- Nr, Name, Price
+mergesort'merge :: (Ord a) => [a] -> [a] -> [a]
+mergesort'merge [] xs = xs
+mergesort'merge xs [] = xs
+mergesort'merge (x:xs) (y:ys)
+    | (x < y) = x:mergesort'merge xs (y:ys)
+    | otherwise = y:mergesort'merge (x:xs) ys
+ 
+mergesort'splitinhalf :: [a] -> ([a], [a])
+mergesort'splitinhalf xs = (take n xs, drop n xs)
+    where n = (length xs) `div` 2 
+ 
+mergesort :: (Ord a) => [a] -> [a]
+mergesort xs 
+    | (length xs) > 1 = mergesort'merge (mergesort ls) (mergesort rs)
+    | otherwise = xs
+    where (ls, rs) = mergesort'splitinhalf xs
 
-makeDiscount :: BillType -> Int
-makeDiscount b = 
+codes = [1234, 4791, 3814, 1112, 1113, 1234] :: [Int]
+--discount :: [Int] -> Int
+--discount l = []
+
+
+-- Chapter 7
+-- Ex 7.2
+listMatch :: [Int] -> Int
+listMatch [] = 0
+listMatch (x : []) = x
+listMatch (x : y : _) = x+y
