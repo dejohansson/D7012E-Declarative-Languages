@@ -56,6 +56,7 @@ unparse :: EXPR -> String
 unparse (Const n) = show n
 unparse (Var s) = s
 unparse (Op oper e1 e2) = "(" ++ unparse e1 ++ oper ++ unparse e2 ++ ")"
+unparse (App str ex) = str ++ "(" ++ unparse ex ++ ")" --Added
 
 eval :: EXPR -> [(String,Float)] -> Float
 eval (Const n) _ = fromIntegral n
@@ -64,6 +65,11 @@ eval (Op "+" left right) env = eval left env + eval right env
 eval (Op "-" left right) env = eval left env - eval right env
 eval (Op "*" left right) env = eval left env * eval right env
 eval (Op "/" left right) env = eval left env / eval right env
+eval (App f ex) env    --Added
+  | f == "sin" = (sin (eval ex env))
+  | f == "cos" = (cos (eval ex env))
+  | f == "log" = (log (eval ex env))
+  | f == "exp" = (exp (eval ex env))
 
 diff :: EXPR -> EXPR -> EXPR
 diff _ (Const _) = Const 0
@@ -76,6 +82,11 @@ diff v (Op "*" e1 e2) =
   Op "+" (Op "*" (diff v e1) e2) (Op "*" e1 (diff v e2))
 diff v (Op "/" e1 e2) =
   Op "/" (Op "-" (Op "*" (diff v e1) e1) (Op "*" e1 (diff v e2))) (Op "*" e2 e2)
+diff v (App str ex)     --Added
+  | str == "sin" = Op "*" (App "cos" ex) (diff v ex)
+  | str == "cos" = Op "*" (Op "-" (Const 0) (App "sin" ex)) (diff v ex)
+  | str == "log"  = Op "/" (diff v ex) ex
+  | str == "exp"  = Op "*" (App "exp" ex) (diff v ex)
 diff _ _ = error "can not compute the derivative"
 
 simplify :: EXPR -> EXPR
