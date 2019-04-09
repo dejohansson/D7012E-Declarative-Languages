@@ -106,3 +106,25 @@ simplify (Op oper left right) =
       ("-",le,re)     -> if left==right then Const 0 else Op "-" le re
       (op,le,re)      -> Op op le re
 simplify (App str ex) = App str (simplify ex) --Added
+
+-- Part 3
+mkfun :: (EXPR, EXPR) -> (Float -> Float)
+mkfun (body, Var var) = \x -> eval body [(var,x)]
+
+-- Part 4
+findzeroHelp :: String -> EXPR -> EXPR -> Float -> Float
+findzeroHelp var f f' x = if abs (x - x') > 0.0001 then (findzeroHelp var f f' x') else x'
+                            where x' = x - (eval f [(var, x)]) / (eval f' [(var, x)])
+
+findzero :: String -> String -> Float -> Float
+findzero var body x = let f  = parse body
+                          f' = diff (Var var) f
+                      in  
+                        if eval f [(var, x)] == 0 then x 
+                        else findzeroHelp var f f' x
+
+-- Test Examples:
+-- findzero "x" "x*x*x+x-1" 1.0     = 0.68232775
+-- findzero "y" "cos(y)*sin(y)" 2.0 = 1.5707964
+-- findzero "z" "z*z-1" 5.0         = 1
+-- findzero "z" "z*z-1" (-5.0)      = -1
