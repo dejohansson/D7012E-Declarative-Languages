@@ -1,3 +1,5 @@
+--David Johansson
+
 type SubSeq = ([Int], Int, Int, Int)
 
 takeKtoOne :: Int -> Int -> [Int] -> [SubSeq]
@@ -32,4 +34,4 @@ lineGen k ((seq, s, f, l) : rest) = (show s) ++ "\t" ++ (show f) ++ "\t"
 
 strGen :: Int -> [Int] -> String
 strGen k l = "Entire list: " ++ (show l) ++ "\n"
-                ++ "size\ti\tj\tsublist\n" ++ (lineGen k (iSort (allSubSeq 1 l)))
+                ++ "size\ti\tj\tsublist\n" ++ (lineGen k (iSort (allSubSeq 1 l))) ++ "\n"
