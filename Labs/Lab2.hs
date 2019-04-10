@@ -108,23 +108,27 @@ simplify (Op oper left right) =
 simplify (App str ex) = App str (simplify ex) --Added
 
 -- Part 3
-mkfun :: (EXPR, EXPR) -> (Float -> Float)
+type Fun = (Float -> Float)
+mkfun :: (EXPR, EXPR) -> Fun
 mkfun (body, Var var) = \x -> eval body [(var,x)]
 
 -- Part 4
-findzeroHelp :: String -> EXPR -> EXPR -> Float -> Float
-findzeroHelp var f f' x = if abs (x - x') > 0.0001 then (findzeroHelp var f f' x') else x'
-                            where x' = x - (eval f [(var, x)]) / (eval f' [(var, x)])
+findzeroHelp :: Fun -> Fun -> Float -> Float
+findzeroHelp f f' x = if abs (x - x') > 0.0001 then (findzeroHelp f f' x') else x'
+                        where x' = x - (f x) / (f' x)
 
 findzero :: String -> String -> Float -> Float
-findzero var body x = let f  = parse body
-                          f' = diff (Var var) f
-                      in  
-                        if eval f [(var, x)] == 0 then x 
-                        else findzeroHelp var f f' x
+findzero var body x = if f' x == 0 then x else findzeroHelp f f' x
+                        where f  = mkfun ((parse body), (Var var))
+                              f' = mkfun ((diff (Var var) (parse body)), (Var var))
 
 -- Test Examples:
--- findzero "x" "x*x*x+x-1" 1.0     = 0.68232775
--- findzero "y" "cos(y)*sin(y)" 2.0 = 1.5707964
--- findzero "z" "z*z-1" 5.0         = 1
--- findzero "z" "z*z-1" (-5.0)      = -1
+-- unparse (simplify (diff (Var "x") (parse "exp(sin(2*x))")))
+
+-- myFun = mkfun (parse "x*x+2", Var "x")
+-- myFun 3
+
+-- findzero "x" "x*x*x+x-1" 1.0       = 0.68232775
+-- findzero "y" "cos(y)*sin(y)" 2.0   = 1.5707964
+-- findzero "z" "z*z-1" 5.0           = 1
+-- findzero "z" "z*z-1" (-5.0)        = -1
