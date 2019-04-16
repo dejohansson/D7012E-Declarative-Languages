@@ -18,3 +18,6 @@ n21 = testValue "1/(2-y)" {-  Expr.value: division by 0 -}
 n31 = testValue "2+z"     {-  Expr.value: undefined variable z -}
 
 
+-- Extra tests
+n100 = testValue "y"
+n101 = testValue "f"
