@@ -21,3 +21,5 @@ n31 = testValue "2+z"     {-  Expr.value: undefined variable z -}
 -- Extra tests
 n100 = testValue "y"
 n101 = testValue "f"
+n102 = testValue "3*y"
+n103 = testValue "10/y"
