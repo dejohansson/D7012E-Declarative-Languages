@@ -7,11 +7,12 @@ type T = Statement
 data Statement =
     Assignment String Expr.T |      --Original
     Skip |
-    Begin Statements | --Multiple Statements ????
+    Begin Statements |
     If Expr.T Statement Statement | --Original
     While Expr.T Statement |
     Read String |
-    Write Expr.T
+    Write Expr.T |
+    Repeat Statement Expr.T
     deriving Show
 
 type Statements = [Statement]
@@ -33,6 +34,9 @@ readStmt = accept "read" -# word #- require ";" >-> \v -> Read v
 
 write = accept "write" -# Expr.parse #- require ";" >-> \e -> Write e
 
+repeatStmt = accept "repeat" -# parse #- require "until" # Expr.parse #- require ";" >-> buildRepeat
+buildRepeat (s, e)= Repeat s e
+
 statements = iter parse
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
@@ -46,11 +50,13 @@ exec (If cond thenStmts elseStmts: stmts) dict input =     --Original
     else exec (elseStmts: stmts) dict input
 exec (While cond stmt: stmts) dict input = 
     if (Expr.value cond dict)>0
-    then exec [stmt, (While cond stmt)] dict input
+    then exec ([stmt, (While cond stmt)]++stmts) dict input
     else exec stmts dict input
 exec (Read v: stmts) dict (input: inputs) = exec stmts (Dictionary.insert (v, input) dict) inputs
 exec (Write e: stmts) dict input = (Expr.value e dict) : (exec stmts dict input)
+exec (Repeat stmt cond: stmts) dict input = exec ([stmt, (If cond Skip (Repeat stmt cond))]++stmts) dict input
 
 instance Parse Statement where
-  parse = assignment ! skip ! begin ! ifStmt ! while ! readStmt ! write   --error "Statement.parse not implemented"
+  parse =   assignment ! skip ! begin ! ifStmt ! 
+            while ! readStmt ! write ! repeatStmt
   toString = error "Statement.toString not implemented"
