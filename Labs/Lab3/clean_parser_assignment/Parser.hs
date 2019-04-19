@@ -58,4 +58,3 @@ number' n = digitVal #> (\ d -> number' (10*n+d))
           ! return n
 number :: Parser Integer
 number = token (digitVal #> number')
-

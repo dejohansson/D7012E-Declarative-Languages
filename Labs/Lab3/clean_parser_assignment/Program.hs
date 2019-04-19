@@ -8,7 +8,11 @@ instance Parse T where
   parse = iter Statement.parse >-> Program
   toString (Program stmts) = Statement.showStmts 0 stmts
 
-exec :: String -> [Integer] -> [Integer]  
-exec p i = error "" --case (parse p) of
+exec :: T -> [Integer] -> [Integer]  
+exec (Program p) i = Statement.exec p (Dictionary.empty) i
+             --case (parse p) of
              --Just (prog, str) -> Statement.exec prog (Dictionary.empty) i
              --Nothing -> error ""
+exProg :: Maybe (T, String) -> [Statement.T]
+exProg Nothing = error "Couldn't extract program!"
+exProg (Just (Program prog, str)) = prog

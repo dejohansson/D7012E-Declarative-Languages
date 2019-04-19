@@ -54,7 +54,7 @@ exec (While cond stmt: stmts) dict input =
     else exec stmts dict input
 exec (Read v: stmts) dict (input: inputs) = exec stmts (Dictionary.insert (v, input) dict) inputs
 exec (Write e: stmts) dict input = (Expr.value e dict) : (exec stmts dict input)
-exec (Repeat stmt cond: stmts) dict input = exec ([stmt, (If cond Skip (Repeat stmt cond))]++stmts) dict input
+exec (Repeat stmt cond: stmts) dict input = exec ([stmt, (If cond (Repeat stmt cond) Skip)]++stmts) dict input
 
 tabN :: Int -> String
 tabN 0 = ""
