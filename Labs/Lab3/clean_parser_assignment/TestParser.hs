@@ -1,3 +1,4 @@
+-- David Johansson
 {- Test for Parser.hs -}
 module TestParser where
 
