@@ -11,7 +11,7 @@
 
 
 %do not chagne the follwoing line!
-:- ensure_loaded('play.pl').
+:- ensure_loaded('d:\\Dokument\\Skola\\Declarative Languages\\D7012E-Declarative-Languages\\Labs\\LabP3\\othello.pl').
 
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
@@ -59,8 +59,9 @@
 %    2 means player two has a stone in this position. 
 
 
-
-
+% opp(Player, Opponent)
+opp(1, 2).
+opp(2, 1).
 
 % DO NOT CHANGE THE COMMENT BELOW.
 %
@@ -68,10 +69,17 @@
 
 initBoard([ [.,.,.,.,.,.], 
             [.,.,.,.,.,.],
-	    [.,.,1,2,.,.], 
-	    [.,.,2,1,.,.], 
+	    	[.,.,1,2,.,.], 
+	    	[.,.,2,1,.,.], 
             [.,.,.,.,.,.], 
-	    [.,.,.,.,.,.] ]).
+	    	[.,.,.,.,.,.] ]).
+
+initTestBoard([ [.,.,.,.,.,.], 
+				[.,.,.,.,.,.],
+				[.,.,.,.,.,.], 
+				[.,.,.,.,.,.], 
+				[.,.,.,.,.,.], 
+				[.,.,.,.,.,.] ]).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -80,9 +88,7 @@ initBoard([ [.,.,.,.,.,.],
 %%%  holds iff InitialState is the initial state and 
 %%%  InitialPlyr is the player who moves first. 
 
-
-
-
+initialize(initBoard, 1).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -147,10 +153,27 @@ printList([H | L]) :-
 %   - returns list MvList of all legal moves Plyr can make in State
 %
 
+moves(Plyr, State, MvList) :-
+	testMoves(Plyr, State, [5,5], [], MvList).
 
+testMoves(_, _, [_,-1], MvList, MvList).
+testMoves(Plyr, State, [X,Y], SoFar, MvList) :-
+	Y > -1,
+	testLine(Plyr, State, [X,Y], SoFar, LnList),
+	Y2 is Y-1,
+	testMoves(Plyr, State, [X,Y2], LnList, MvList).
 
-
-
+testLine(_, _, [-1,_], LnList, LnList).
+testLine(Plyr, State, [X,Y], SoFar, LnList) :-
+	X > -1,
+	validmove(Plyr, State, [X,Y]), !,
+	X2 is X-1,
+	testLine(Plyr, State, [X2,Y], [[X,Y] | SoFar], LnList).
+testLine(Plyr, State, [X,Y], SoFar, LnList) :-
+	X > -1,
+	X2 is X-1,
+	testLine(Plyr, State, [X2,Y], SoFar, LnList).
+	
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
 %%%%%%%%%%%%%%nextState(Plyr,Move,State,NewState,NextPlyr)%%%%%%%%%%%%%%%%%%%%
@@ -171,9 +194,70 @@ printList([H | L]) :-
 %% define validmove(Plyr,State,Proposed). 
 %   - true if Proposed move by Plyr is valid at State.
 
+validmove(Plyr, State, Proposed) :-
+	get(State, Proposed, Value),
+	Value = '.',
+	check(Plyr, State, Proposed).
+validmove(Plyr, State, 'n') :-
+	moves(Plyr, State, []).
 
-
-
+check(Plyr, State, [X, Y]) :- 
+	Y2 is Y-1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	checkNorth(Plyr, State, [X, Y2]).
+check(Plyr, State, [X, Y]) :- 
+	Y2 is Y+1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	checkSouth(Plyr, State, [X, Y2]).
+check(Plyr, State, [X, Y]) :- 
+	X2 is X-1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	checkWest(Plyr, State, [X2, Y]).
+check(Plyr, State, [X, Y]) :- 
+	X2 is X+1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	checkEast(Plyr, State, [X2, Y]).
+%
+checkNorth(Plyr, State, [X, Y]) :- 
+	Y2 is Y-1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	checkNorth(Plyr, State, [X, Y2]).
+checkNorth(Plyr, State, [X, Y]) :- 
+	Y2 is Y-1,
+	get(State, [X, Y2], Plyr).
+%
+checkSouth(Plyr, State, [X, Y]) :- 
+	Y2 is Y+1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	checkSouth(Plyr, State, [X, Y2]).
+checkSouth(Plyr, State, [X, Y]) :- 
+	Y2 is Y+1,
+	get(State, [X, Y2], Plyr).
+%
+checkWest(Plyr, State, [X, Y]) :- 
+	X2 is X-1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	checkWest(Plyr, State, [X2, Y]).
+checkWest(Plyr, State, [X, Y]) :- 
+	X2 is X-1,
+	get(State, [X2, Y], Plyr).
+%
+checkEast(Plyr, State, [X, Y]) :- 
+	X2 is X+1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	checkEast(Plyr, State, [X2, Y]).
+checkEast(Plyr, State, [X, Y]) :- 
+	X2 is X+1,
+	get(State, [X2, Y], Plyr).
+%
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
