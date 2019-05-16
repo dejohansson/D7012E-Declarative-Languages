@@ -76,7 +76,7 @@ initBoard([ [.,.,.,.,.,.],
 
 initTestBoard([ [.,.,.,.,.,.], 
 				[.,.,.,.,.,.],
-				[.,.,.,.,.,.], 
+				[.,.,1,.,.,.], 
 				[.,.,.,.,.,.], 
 				[.,.,.,.,.,.], 
 				[.,.,.,.,.,.] ]).
@@ -98,9 +98,16 @@ initialize(initBoard, 1).
 %     - returns winning player if State is a terminal position and
 %     Plyr has a higher score than the other player 
 
-
-
-
+winner(State, 1) :-
+	terminal(State),
+	points(1, State, P1),
+	points(2, State, P2),
+	P1 > P2.
+winner(State, 2) :-
+	terminal(State),
+	points(1, State, P1),
+	points(2, State, P2),
+	P2 > P1.
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -109,9 +116,37 @@ initialize(initBoard, 1).
 %% define tie(State) here. 
 %    - true if terminal State is a "tie" (no winner) 
 
+tie(State) :-
+	terminal(State),
+	points(1, State, Points),
+	points(2, State, Points).
 
+points(Plyr, State, Points) :-
+	countP(Plyr, State, [5,5], 0, Points).
 
+countP(_, _, [_,-1], Points, Points).
+countP(Plyr, State, [X,Y], SoFar, Points) :-
+	Y > -1,
+	countLine(Plyr, State, [X,Y], SoFar, LnPoints),
+	Y2 is Y-1,
+	countP(Plyr, State, [X,Y2], LnPoints, Points).
 
+countLine(_, _, [-1,_], LnPoints, LnPoints).
+countLine(Plyr, State, [X,Y], SoFar, LnPoints) :-
+	X > -1,
+	point(Plyr, State, [X,Y], P), !,
+	X2 is X-1,
+	NewP is SoFar+P,
+	countLine(Plyr, State, [X2,Y], NewP, LnPoints).
+countLine(Plyr, State, [X,Y], SoFar, LnPoints) :-
+	X > -1,
+	X2 is X-1,
+	countLine(Plyr, State, [X2,Y], SoFar, LnPoints).
+
+point(Plyr, State, [X,Y], 1) :-
+	get(State, [X, Y], Plyr).
+point(Plyr, State, [X,Y], 0) :-
+	not(get(State, [X, Y], Plyr)).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -120,9 +155,9 @@ initialize(initBoard, 1).
 %% define terminal(State). 
 %   - true if State is a terminal   
 
-
-
-
+terminal(State) :-
+	moves(1, State, []),
+	moves(2, State, []).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
