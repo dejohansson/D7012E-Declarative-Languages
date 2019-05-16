@@ -3,15 +3,15 @@
 %    D7012E Declarative languages
 %    Luleå University of Technology
 %
-%    Student full name: <TO BE FILLED IN BEFORE THE GRADING> 
-%    Student user id  : <TO BE FILLED IN BEFORE THE GRADING> 
+%    Student full name: David Johansson 
+%    Student user id  : davjom-5
 %
 /* ------------------------------------------------------- */
 
 
 
 %do not chagne the follwoing line!
-:- ensure_loaded('d:\\Dokument\\Skola\\Declarative Languages\\D7012E-Declarative-Languages\\Labs\\LabP3\\play.pl').
+:- ensure_loaded('play.pl').
 
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
