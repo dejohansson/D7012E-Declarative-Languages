@@ -218,10 +218,105 @@ testLine(Plyr, State, [X,Y], SoFar, LnList) :-
 %     state) and NextPlayer (i.e. the next player who will move).
 %
 
+nextState(Plyr, Move, State, NewState, NextPlyr) :-
+	opp(Plyr, NextPlyr),
+	nextNorth(Plyr, State, Move, S1),
+	nextSouth(Plyr, S1, Move, S2),
+	nextWest(Plyr, S2, Move, S3),
+	nextEast(Plyr, S3, Move, NewState).
 
-
-
-
+nextNorth(Plyr, State, [X, Y], State) :-
+	not(updNorth(Plyr, State, [X, Y], _)).
+nextNorth(Plyr, State, [X, Y], NewState) :-
+	updNorth(Plyr, State, [X, Y], NewState).
+%
+updNorth(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y-1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	updNorthHelp(Plyr, State, [X, Y2], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+%
+updNorthHelp(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y-1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	updNorthHelp(Plyr, State, [X, Y2], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+updNorthHelp(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y-1,
+	get(State, [X, Y2], Plyr),
+	set(State, NewState, [X, Y], Plyr).
+%
+nextSouth(Plyr, State, [X, Y], State) :-
+	not(updSouth(Plyr, State, [X, Y], _)).
+nextSouth(Plyr, State, [X, Y], NewState) :-
+	updSouth(Plyr, State, [X, Y], NewState).
+%
+updSouth(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y+1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	updSouthHelp(Plyr, State, [X, Y2], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+%
+updSouthHelp(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y+1,
+	get(State, [X, Y2], Opp),
+	opp(Plyr, Opp),
+	updSouthHelp(Plyr, State, [X, Y2], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+updSouthHelp(Plyr, State, [X, Y], NewState) :-
+	Y2 is Y+1,
+	get(State, [X, Y2], Plyr),
+	set(State, NewState, [X, Y], Plyr).
+%
+nextWest(Plyr, State, [X, Y], State) :-
+	not(updWest(Plyr, State, [X, Y], _)).
+nextWest(Plyr, State, [X, Y], NewState) :-
+	updWest(Plyr, State, [X, Y], NewState).
+%
+updWest(Plyr, State, [X, Y], NewState) :-
+	X2 is X-1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	updWestHelp(Plyr, State, [X2, Y], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+%
+updWestHelp(Plyr, State, [X, Y], NewState) :-
+	X2 is X-1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	updWestHelp(Plyr, State, [X2, Y], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+updWestHelp(Plyr, State, [X, Y], NewState) :-
+	X2 is X-1,
+	get(State, [X2, Y], Plyr),
+	set(State, NewState, [X, Y], Plyr).
+%
+nextEast(Plyr, State, [X, Y], State) :-
+	not(updEast(Plyr, State, [X, Y], _)).
+nextEast(Plyr, State, [X, Y], NewState) :-
+	updEast(Plyr, State, [X, Y], NewState).
+%
+updEast(Plyr, State, [X, Y], NewState) :-
+	X2 is X+1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	updEastHelp(Plyr, State, [X2, Y], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+%
+updEastHelp(Plyr, State, [X, Y], NewState) :-
+	X2 is X+1,
+	get(State, [X2, Y], Opp),
+	opp(Plyr, Opp),
+	updEastHelp(Plyr, State, [X2, Y], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+updEastHelp(Plyr, State, [X, Y], NewState) :-
+	X2 is X+1,
+	get(State, [X2, Y], Plyr),
+	set(State, NewState, [X, Y], Plyr).
+%
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%validmove(Plyr,State,Proposed)%%%%%%%%%%%%%%%%%%%%
