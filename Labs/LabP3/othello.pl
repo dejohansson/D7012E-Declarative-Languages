@@ -11,7 +11,7 @@
 
 
 %do not chagne the follwoing line!
-:- ensure_loaded('d:\\Dokument\\Skola\\Declarative Languages\\D7012E-Declarative-Languages\\Labs\\LabP3\\othello.pl').
+:- ensure_loaded('d:\\Dokument\\Skola\\Declarative Languages\\D7012E-Declarative-Languages\\Labs\\LabP3\\play.pl').
 
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
@@ -218,6 +218,7 @@ testLine(Plyr, State, [X,Y], SoFar, LnList) :-
 %     state) and NextPlayer (i.e. the next player who will move).
 %
 
+nextState(Plyr, 'n', State, State, NextPlyr) :- opp(Plyr, NextPlyr).
 nextState(Plyr, Move, State, NewState, NextPlyr) :-
 	opp(Plyr, NextPlyr),
 	nextNorth(Plyr, State, Move, S1),
@@ -401,9 +402,10 @@ checkEast(Plyr, State, [X, Y]) :-
 %          the value of state (see handout on ideas about
 %          good heuristics.
 
-
-
-
+h(State, 0) :- not(terminal(State)).
+h(State, 0) :- tie(State).
+h(State, 100) :- winner(State, 1).
+h(State, -100) :- winner(State, 2).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -413,9 +415,7 @@ checkEast(Plyr, State, [X, Y]) :-
 %   - returns a value B that is less than the actual or heuristic value
 %     of all states.
 
-
-
-
+lowerBound(-101).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -425,9 +425,7 @@ checkEast(Plyr, State, [X, Y]) :-
 %   - returns a value B that is greater than the actual or heuristic value
 %     of all states.
 
-
-
-
+upperBound(101).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
