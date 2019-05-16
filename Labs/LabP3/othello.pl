@@ -102,12 +102,12 @@ winner(State, 1) :-
 	terminal(State),
 	points(1, State, P1),
 	points(2, State, P2),
-	P1 > P2.
+	P1 < P2.
 winner(State, 2) :-
 	terminal(State),
 	points(1, State, P1),
 	points(2, State, P2),
-	P2 > P1.
+	P2 < P1.
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
