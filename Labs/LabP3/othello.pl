@@ -88,7 +88,7 @@ initTestBoard([ [.,.,.,.,.,.],
 %%%  holds iff InitialState is the initial state and 
 %%%  InitialPlyr is the player who moves first. 
 
-initialize(initBoard, 1).
+initialize(B, 1) :- initBoard(B).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -156,7 +156,7 @@ point(Plyr, State, [X,Y], 0) :-
 %   - true if State is a terminal   
 
 terminal(State) :-
-	moves(1, State, []),
+	moves(1, State, []), !,
 	moves(2, State, []).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
