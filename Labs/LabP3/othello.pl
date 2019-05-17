@@ -242,11 +242,37 @@ testLine(Plyr, State, [X,Y], SoFar, LnList) :-
 nextState(Plyr, 'n', State, State, NextPlyr) :- opp(Plyr, NextPlyr).
 nextState(Plyr, Move, State, NewState, NextPlyr) :-
 	opp(Plyr, NextPlyr),
-	nextNorth(Plyr, State, Move, S1),
-	nextSouth(Plyr, S1, Move, S2),
-	nextWest(Plyr, S2, Move, S3),
-	nextEast(Plyr, S3, Move, NewState).
+	nextDir(Plyr, State, Move, [0, 1], S1),
+	nextDir(Plyr, S1, Move, [0, -1], S2),
+	nextDir(Plyr, S2, Move, [1, 0], S3),
+	nextDir(Plyr, S3, Move, [1, 1], S4),
+	nextDir(Plyr, S4, Move, [1, -1], S5),
+	nextDir(Plyr, S5, Move, [-1, 0], S6),
+	nextDir(Plyr, S6, Move, [-1, 1], S7),
+	nextDir(Plyr, S7, Move, [-1, -1], NewState).
 
+nextDir(Plyr, State, [X, Y], [Xi, Yi], State) :-
+	not(updDir(Plyr, State, [X, Y], [Xi, Yi], _)).
+nextDir(Plyr, State, [X, Y], [Xi, Yi], NewState) :-
+	updDir(Plyr, State, [X, Y], [Xi, Yi], NewState).
+%
+updDir(Plyr, State, [X, Y], [Xi, Yi], NewState) :-
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	get(State, [X2, Y2], Opp),
+	opp(Plyr, Opp),
+	updDirH(Plyr, State, [X2, Y2], [Xi, Yi], TempState),
+	set(TempState, NewState, [X, Y], Plyr).
+%
+updDirH(Plyr, State, [X, Y], [Xi, Yi], NewState) :-
+	updDir(Plyr, State, [X, Y], [Xi, Yi], NewState).
+updDirH(Plyr, State, [X, Y], [Xi, Yi], NewState) :-
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	get(State, [X2, Y2], Plyr),
+	set(State, NewState, [X, Y], Plyr).
+%
+/*
 nextNorth(Plyr, State, [X, Y], State) :-
 	not(updNorth(Plyr, State, [X, Y], _)).
 nextNorth(Plyr, State, [X, Y], NewState) :-
@@ -337,7 +363,7 @@ updEastHelp(Plyr, State, [X, Y], NewState) :-
 updEastHelp(Plyr, State, [X, Y], NewState) :-
 	X2 is X+1,
 	get(State, [X2, Y], Plyr),
-	set(State, NewState, [X, Y], Plyr).
+	set(State, NewState, [X, Y], Plyr).*/
 %
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -354,26 +380,38 @@ validmove(Plyr, State, 'n') :-
 	moves(Plyr, State, []).
 
 check(Plyr, State, [X, Y]) :- 
-	Y2 is Y-1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	checkNorth(Plyr, State, [X, Y2]).
+	checkDir(Plyr, State, [X, Y], [0, -1]).
 check(Plyr, State, [X, Y]) :- 
-	Y2 is Y+1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	checkSouth(Plyr, State, [X, Y2]).
+	checkDir(Plyr, State, [X, Y], [0, 1]).
 check(Plyr, State, [X, Y]) :- 
-	X2 is X-1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	checkWest(Plyr, State, [X2, Y]).
+	checkDir(Plyr, State, [X, Y], [1, 0]).
 check(Plyr, State, [X, Y]) :- 
-	X2 is X+1,
-	get(State, [X2, Y], Opp),
+	checkDir(Plyr, State, [X, Y], [1, 1]).
+check(Plyr, State, [X, Y]) :- 
+	checkDir(Plyr, State, [X, Y], [1, -1]).
+check(Plyr, State, [X, Y]) :- 
+	checkDir(Plyr, State, [X, Y], [-1, 0]).
+check(Plyr, State, [X, Y]) :- 
+	checkDir(Plyr, State, [X, Y], [-1, 1]).
+check(Plyr, State, [X, Y]) :- 
+	checkDir(Plyr, State, [X, Y], [-1, -1]).
+
+checkDir(Plyr, State, [X, Y], [Xi, Yi]) :-
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	get(State, [X2, Y2], Opp),
 	opp(Plyr, Opp),
-	checkEast(Plyr, State, [X2, Y]).
+	checkDirH(Plyr, State, [X2, Y2], [Xi, Yi]).
+
+checkDirH(Plyr, State, [X, Y], [Xi, Yi]) :- 
+	checkDir(Plyr, State, [X, Y], [Xi, Yi]).
+checkDirH(Plyr, State, [X, Y], [Xi, Yi]) :- 
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	get(State, [X2, Y2], Plyr).
 %
+
+/* %
 checkNorth(Plyr, State, [X, Y]) :- 
 	Y2 is Y-1,
 	get(State, [X, Y2], Opp),
@@ -409,7 +447,7 @@ checkEast(Plyr, State, [X, Y]) :-
 checkEast(Plyr, State, [X, Y]) :- 
 	X2 is X+1,
 	get(State, [X2, Y], Plyr).
-%
+% */
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
