@@ -66,6 +66,9 @@
 opp(1, 2).
 opp(2, 1).
 
+len([], 0).
+len([_|T], L) :- len(T, L2), L is L2+1.
+
 % DO NOT CHANGE THE COMMENT BELOW.
 %
 % given helper: Inital state of the board
@@ -77,12 +80,12 @@ initBoard([ [.,.,.,.,.,.],
             [.,.,.,.,.,.], 
 	    	[.,.,.,.,.,.] ]).
 
-initTestBoard([ [.,.,.,.,.,.], 
-				[.,.,.,.,.,.],
-				[.,.,1,.,.,.], 
-				[.,.,.,.,.,.], 
-				[.,.,.,.,.,.], 
-				[.,.,.,.,.,.] ]).
+initTestBoard([ [2,.,.,2,.,1], 
+				[2,2,2,1,1,1],
+				[2,2,2,2,2,1], 
+				[2,1,2,2,2,1], 
+				[1,1,2,1,1,1], 
+				[2,2,2,2,2,1] ]).
 
 testBoard1([ [.,.,.,.,.,.], 
 			[.,1,.,.,.,.],
@@ -215,6 +218,7 @@ printList([H | L]) :-
 moves(Plyr, State, MvList) :-
 	testMoves(Plyr, State, [5,5], [], MvList).
 
+testMoves(_, _, [_,-1], [], ['n']).
 testMoves(_, _, [_,-1], MvList, MvList).
 testMoves(Plyr, State, [X,Y], SoFar, MvList) :-
 	Y > -1,
@@ -287,7 +291,7 @@ validmove(Plyr, State, Proposed) :-
 	Value = '.',
 	check(Plyr, State, Proposed).
 validmove(Plyr, State, 'n') :-
-	moves(Plyr, State, []).
+	moves(Plyr, State, ['n']).
 
 check(Plyr, State, [X, Y]) :- 
 	checkDir(Plyr, State, [X, Y], [0, -1]).
@@ -332,10 +336,25 @@ checkDirH(Plyr, State, [X, Y], [Xi, Yi]) :-
 %          the value of state (see handout on ideas about
 %          good heuristics.
 
-h(State, 0) :- not(terminal(State)).
+h(State, P) :- 
+	not(terminal(State)),
+	%moves(1, State, M1), moves(2, State, M2),
+	%len(M1, L1), len(M2, L2),
+	corner(State, P). 
 h(State, 0) :- tie(State).
 h(State, 100) :- winner(State, 1).
 h(State, -100) :- winner(State, 2).
+
+corner(State, P) :-
+	posPoint(State, [0, 0], P1),
+	posPoint(State, [0, 5], P2),
+	posPoint(State, [5, 0], P3),
+	posPoint(State, [5, 5], P4),
+	P is P1+P2+P3+P4.
+
+posPoint(State, [X, Y], 0) :- get(State, [X, Y], '.').
+posPoint(State, [X, Y], 1) :- get(State, [X, Y], 2).
+posPoint(State, [X, Y], -2) :- get(State, [X, Y], 1).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
