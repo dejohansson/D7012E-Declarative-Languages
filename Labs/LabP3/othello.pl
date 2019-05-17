@@ -11,7 +11,10 @@
 
 
 %do not chagne the follwoing line!
-:- ensure_loaded('play.pl').
+%:- ensure_loaded('play.pl').
+
+%Random player 1 AI.
+:- ensure_loaded('stupid.pl').
 
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
@@ -271,100 +274,7 @@ updDirH(Plyr, State, [X, Y], [Xi, Yi], NewState) :-
 	Y2 is Y+Yi,
 	get(State, [X2, Y2], Plyr),
 	set(State, NewState, [X, Y], Plyr).
-%
-/*
-nextNorth(Plyr, State, [X, Y], State) :-
-	not(updNorth(Plyr, State, [X, Y], _)).
-nextNorth(Plyr, State, [X, Y], NewState) :-
-	updNorth(Plyr, State, [X, Y], NewState).
-%
-updNorth(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y-1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	updNorthHelp(Plyr, State, [X, Y2], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-%
-updNorthHelp(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y-1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	updNorthHelp(Plyr, State, [X, Y2], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-updNorthHelp(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y-1,
-	get(State, [X, Y2], Plyr),
-	set(State, NewState, [X, Y], Plyr).
-%
-nextSouth(Plyr, State, [X, Y], State) :-
-	not(updSouth(Plyr, State, [X, Y], _)).
-nextSouth(Plyr, State, [X, Y], NewState) :-
-	updSouth(Plyr, State, [X, Y], NewState).
-%
-updSouth(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y+1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	updSouthHelp(Plyr, State, [X, Y2], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-%
-updSouthHelp(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y+1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	updSouthHelp(Plyr, State, [X, Y2], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-updSouthHelp(Plyr, State, [X, Y], NewState) :-
-	Y2 is Y+1,
-	get(State, [X, Y2], Plyr),
-	set(State, NewState, [X, Y], Plyr).
-%
-nextWest(Plyr, State, [X, Y], State) :-
-	not(updWest(Plyr, State, [X, Y], _)).
-nextWest(Plyr, State, [X, Y], NewState) :-
-	updWest(Plyr, State, [X, Y], NewState).
-%
-updWest(Plyr, State, [X, Y], NewState) :-
-	X2 is X-1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	updWestHelp(Plyr, State, [X2, Y], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-%
-updWestHelp(Plyr, State, [X, Y], NewState) :-
-	X2 is X-1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	updWestHelp(Plyr, State, [X2, Y], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-updWestHelp(Plyr, State, [X, Y], NewState) :-
-	X2 is X-1,
-	get(State, [X2, Y], Plyr),
-	set(State, NewState, [X, Y], Plyr).
-%
-nextEast(Plyr, State, [X, Y], State) :-
-	not(updEast(Plyr, State, [X, Y], _)).
-nextEast(Plyr, State, [X, Y], NewState) :-
-	updEast(Plyr, State, [X, Y], NewState).
-%
-updEast(Plyr, State, [X, Y], NewState) :-
-	X2 is X+1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	updEastHelp(Plyr, State, [X2, Y], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-%
-updEastHelp(Plyr, State, [X, Y], NewState) :-
-	X2 is X+1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	updEastHelp(Plyr, State, [X2, Y], TempState),
-	set(TempState, NewState, [X, Y], Plyr).
-updEastHelp(Plyr, State, [X, Y], NewState) :-
-	X2 is X+1,
-	get(State, [X2, Y], Plyr),
-	set(State, NewState, [X, Y], Plyr).*/
-%
+
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%validmove(Plyr,State,Proposed)%%%%%%%%%%%%%%%%%%%%
@@ -409,45 +319,6 @@ checkDirH(Plyr, State, [X, Y], [Xi, Yi]) :-
 	X2 is X+Xi,
 	Y2 is Y+Yi,
 	get(State, [X2, Y2], Plyr).
-%
-
-/* %
-checkNorth(Plyr, State, [X, Y]) :- 
-	Y2 is Y-1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	checkNorth(Plyr, State, [X, Y2]).
-checkNorth(Plyr, State, [X, Y]) :- 
-	Y2 is Y-1,
-	get(State, [X, Y2], Plyr).
-%
-checkSouth(Plyr, State, [X, Y]) :- 
-	Y2 is Y+1,
-	get(State, [X, Y2], Opp),
-	opp(Plyr, Opp),
-	checkSouth(Plyr, State, [X, Y2]).
-checkSouth(Plyr, State, [X, Y]) :- 
-	Y2 is Y+1,
-	get(State, [X, Y2], Plyr).
-%
-checkWest(Plyr, State, [X, Y]) :- 
-	X2 is X-1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	checkWest(Plyr, State, [X2, Y]).
-checkWest(Plyr, State, [X, Y]) :- 
-	X2 is X-1,
-	get(State, [X2, Y], Plyr).
-%
-checkEast(Plyr, State, [X, Y]) :- 
-	X2 is X+1,
-	get(State, [X2, Y], Opp),
-	opp(Plyr, Opp),
-	checkEast(Plyr, State, [X2, Y]).
-checkEast(Plyr, State, [X, Y]) :- 
-	X2 is X+1,
-	get(State, [X2, Y], Plyr).
-% */
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
