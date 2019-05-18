@@ -11,10 +11,10 @@
 
 
 %do not chagne the follwoing line!
-%:- ensure_loaded('play.pl').
+:- ensure_loaded('play.pl').
 
 %Random player 1 AI.
-:- ensure_loaded('stupid.pl').
+%:- ensure_loaded('stupid.pl').
 
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
@@ -337,13 +337,73 @@ checkDirH(Plyr, State, [X, Y], [Xi, Yi]) :-
 %          good heuristics.
 
 h(State, P) :- 
-	not(terminal(State)),
-	%moves(1, State, M1), moves(2, State, M2),
-	%len(M1, L1), len(M2, L2),
-	corner(State, P). 
-h(State, 0) :- tie(State).
-h(State, 100) :- winner(State, 1).
-h(State, -100) :- winner(State, 2).
+	not(terminal(State)), !,
+	%corner(State, P).
+	stableCount(State, P1, P2), !,
+	P is P2.
+h(State, 0) :- tie(State), !.
+h(State, 100) :- winner(State, 1), !.
+h(State, -100) :- winner(State, 2), !.
+
+stableCount(State, P1, P2) :-
+	testStable(State, [5,5], 0, 0, P1, P2).
+
+testStable(_, [_,-1], P1, P2, P1, P2).
+testStable(State, [X,Y], P1t, P2t, P1, P2) :-
+	Y > -1,
+	testLineS(State, [X,Y], P1t, P2t, P1n, P2n),
+	Y2 is Y-1,
+	testStable(State, [X,Y2], P1n, P2n, P1, P2).
+
+testLineS(_, [-1,_], P1n, P2n, P1n, P2n).
+testLineS(State, [X,Y], P1t, P2t, P1n, P2n) :-
+	X > -1,
+	stable(1, State, [X, Y]), !,
+	P1temp is P1t+1,
+	X2 is X-1,
+	testLineS(State, [X2,Y], P1temp, P2t, P1n, P2n).
+testLineS(State, [X,Y], P1t, P2t, P1n, P2n) :-
+	X > -1,
+	stable(2, State, [X, Y]), !,
+	P2temp is P2t+1,
+	X2 is X-1,
+	testLineS(State, [X2,Y], P1t, P2temp, P1n, P2n).
+testLineS(State, [X,Y], P1t, P2t, P1n, P2n) :-
+	X > -1,
+	X2 is X-1,
+	testLineS(State, [X2,Y], P1t, P2t, P1n, P2n).
+
+stable(Plyr, State, [X, Y]) :-
+	get(State, [X, Y], Plyr),
+	stableAx(Plyr, State, [X, Y], [1, 0], [-1, 0]), !,
+	stableAx(Plyr, State, [X, Y], [0, 1], [0, -1]), !,
+	stableAx(Plyr, State, [X, Y], [-1, 1], [1, -1]), !,
+	stableAx(Plyr, State, [X, Y], [-1, -1], [1, 1]), !.
+
+stableAx(Plyr, State, [X, Y], [X1, Y1], [X2, Y2]) :-
+	(filledDir(Plyr, State, [X, Y], [X1, Y1]), filledDir(Plyr, State, [X, Y], [X2, Y2])), !.
+stableAx(_, State, [X, Y], [X1, Y1], _) :-
+	X1n is X+X1, Y1n is Y+Y1,
+	not(get(State, [X1n, Y1n], _)), !.
+stableAx(_, State, [X, Y], _, [X2, Y2]) :-
+	X2n is X+X2, Y2n is Y+Y2,
+	not(get(State, [X2n, Y2n], _)), !.
+/* stableAx(Plyr, State, [X, Y], [X1, Y1], _) :-
+	X1n is X+X1, Y1n is Y+Y1,
+	stable(Plyr, State, [X1n, Y1n]), !.
+stableAx(Plyr, State, [X, Y], _, [X2, Y2]) :-
+	X2n is X+X2, Y2n is Y+Y2,
+	stable(Plyr, State, [X2n, Y2n]), !. */
+
+filledDir(_, State, [X, Y], [Xi, Yi]) :- 
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	not(get(State, [X2, Y2], _)), !.
+filledDir(Plyr, State, [X, Y], [Xi, Yi]) :-
+	X2 is X+Xi,
+	Y2 is Y+Yi,
+	(get(State, [X2, Y2], 1) ; get(State, [X2, Y2], 2)), !,
+	filledDir(Plyr, State, [X2, Y2], [Xi, Yi]).
 
 corner(State, P) :-
 	posPoint(State, [0, 0], P1),
