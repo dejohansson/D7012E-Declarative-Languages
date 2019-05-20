@@ -87,30 +87,30 @@ initTestBoard([ [2,.,.,2,.,1],
 				[1,1,2,1,1,1], 
 				[2,2,2,2,2,1] ]).
 
-			emptyBoardXYZ([[.,.,.,.,.,.], 
+emptyBoardXYZ([ [.,.,.,.,.,.], 
 				[.,.,.,.,.,.],  
-			[.,.,.,.,.,.], 
-			[.,.,.,.,.,.], 
 				[.,.,.,.,.,.], 
-			[.,.,.,.,.,.] ]).
+				[.,.,.,.,.,.], 
+				[.,.,.,.,.,.], 
+				[.,.,.,.,.,.] ]).
  
- rndBoardXYZ(NewB) :-
-   emptyBoardXYZ(B),
-   X=5, Y=5, % we fill out the board "backwards" from [5,5] to [0,0]
-   changeXYZ(B,X,Y,NewB). %, showState(NewB). 
- 
- changeXYZ(B,_,Y,B) :- % done when Y<0
-   Y<0,!.
- changeXYZ(B,X,Y,NewB) :- % change row to Y-1 when X<0, and set X back to 5 again
-   X<0, Y2 is Y-1, X2 is 5,
- changeXYZ(B,X2,Y2,NewB).
- changeXYZ(B,X,Y,NewB) :- % place random content on square [X,Y], and recur
-   random_member(V,[1,2,'.']), % Equal probability
-   % random_member(V,[1,2,'.','.']), % 50% '.', 25% 1, and 25% 2
-   % random_member(V,[1,1,2,2,'.']), % 20% '.', 40% 1, and 40% 2
-   set(B,B2,[X,Y],V),
-   X2 is X-1,
-   changeXYZ(B2,X2,Y,NewB).
+rndBoardXYZ(NewB) :-
+emptyBoardXYZ(B),
+X=5, Y=5, % we fill out the board "backwards" from [5,5] to [0,0]
+changeXYZ(B,X,Y,NewB). %, showState(NewB). 
+
+changeXYZ(B,_,Y,B) :- % done when Y<0
+Y<0,!.
+changeXYZ(B,X,Y,NewB) :- % change row to Y-1 when X<0, and set X back to 5 again
+X<0, Y2 is Y-1, X2 is 5,
+changeXYZ(B,X2,Y2,NewB).
+changeXYZ(B,X,Y,NewB) :- % place random content on square [X,Y], and recur
+random_member(V,[1,2,'.']), % Equal probability
+% random_member(V,[1,2,'.','.']), % 50% '.', 25% 1, and 25% 2
+% random_member(V,[1,1,2,2,'.']), % 20% '.', 40% 1, and 40% 2
+set(B,B2,[X,Y],V),
+X2 is X-1,
+changeXYZ(B2,X2,Y,NewB).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -119,7 +119,7 @@ initTestBoard([ [2,.,.,2,.,1],
 %%%  holds iff InitialState is the initial state and 
 %%%  InitialPlyr is the player who moves first. 
 
-initialize(B, 1) :- rndBoardXYZ(B).
+initialize(B, 1) :- initBoard(B).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -187,8 +187,8 @@ point(Plyr, State, [X,Y], 0) :-
 %   - true if State is a terminal   
 
 terminal(State) :-
-	moves(1, State, []), !,
-	moves(2, State, []).
+	moves(1, State, ['n']), !,
+	moves(2, State, ['n']).
 
 % DO NOT CHANGE THIS BLOCK OF COMMENTS.
 %
@@ -392,6 +392,8 @@ stableAx(_, State, [X, Y], [X1, Y1], _) :-
 stableAx(_, State, [X, Y], _, [X2, Y2]) :-
 	X2n is X+X2, Y2n is Y+Y2,
 	not(get(State, [X2n, Y2n], _)), !.
+
+%===== Creates infinite loops! ========%
 /* stableAx(Plyr, State, [X, Y], [X1, Y1], _) :-
 	X1n is X+X1, Y1n is Y+Y1,
 	stable(Plyr, State, [X1n, Y1n]), !.
